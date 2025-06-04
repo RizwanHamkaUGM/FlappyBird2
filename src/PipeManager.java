@@ -40,11 +40,10 @@ public class PipeManager {
             pipe.setX(pipe.getX() + GameConstants.VELOCITY_X_PIPES);
 
             if (!pipe.isPassed() && bird.getX() > pipe.getX() + pipe.getWidth()) {
-                scoreGainedThisFrame += 0.5; // Hanya skor untuk satu bagian pipa (atas atau bawah)
+                scoreGainedThisFrame += 0.5; 
                 pipe.setPassed(true);
             }
         }
-        // Hapus pipa yang sudah keluar layar
         pipes.removeIf(pipe -> pipe.getX() + pipe.getWidth() < 0);
         return scoreGainedThisFrame;
     }

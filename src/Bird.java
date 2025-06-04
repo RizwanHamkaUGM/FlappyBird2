@@ -5,7 +5,7 @@ public class Bird {
     private int y;
     private int width;
     private int height;
-    private Image img; // Gambar burung saat ini
+    private Image img; 
 
     public Bird(Image initialImg, int startX, int startY, int width, int height) {
         this.img = initialImg;

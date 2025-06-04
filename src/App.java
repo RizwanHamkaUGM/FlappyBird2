@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 public class App {
     private static JFrame frame;
     private static CardLayout cardLayout;
-    private static JPanel mainPanel; // Panel yang menggunakan CardLayout
+    private static JPanel mainPanel; 
     private static MainMenu mainMenu;
     private static FlappyBird flappyBirdGame;
 
@@ -23,7 +23,7 @@ public class App {
         mainPanel = new JPanel(cardLayout);
 
         mainMenu = new MainMenu();
-        flappyBirdGame = new FlappyBird(); // Asumsi kelas FlappyBird Anda sudah siap
+        flappyBirdGame = new FlappyBird(); 
 
         mainPanel.add(mainMenu, MAIN_MENU_PANEL);
         mainPanel.add(flappyBirdGame, FLAPPY_BIRD_PANEL);

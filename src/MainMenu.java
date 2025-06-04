@@ -12,13 +12,12 @@ public class MainMenu extends JPanel {
     private Image backgroundImage;
     private Image titleImage;
     private Image startButtonImage;
-    private Image startButtonHoverImage; // Gambar tombol saat mouse hover
-    private Image currentStartButtonImage; // Gambar tombol yang sedang ditampilkan
+    private Image startButtonHoverImage; 
+    private Image currentStartButtonImage; 
 
     private Rectangle startButtonBounds;
     private List<ActionListener> listeners = new ArrayList<>();
 
-    // Dimensi panel, bisa disesuaikan atau diambil dari GameConstants jika ada
     private static final int PANEL_WIDTH = 1280;
     private static final int PANEL_HEIGHT = 720;
 
@@ -29,7 +28,6 @@ public class MainMenu extends JPanel {
         loadImages();
         calculateButtonBounds();
 
-        // Set gambar tombol awal
         currentStartButtonImage = startButtonImage;
 
         addMouseListener(new MouseAdapter() {
