@@ -5,9 +5,9 @@ public interface GameConstants {
     int BIRD_START_X = BOARD_WIDTH / 8;
     int BIRD_START_Y = BOARD_HEIGHT / 2;
     int BIRD_WIDTH = 34 * 3; // 102
-    int BIRD_HEIGHT = 34 * 3; // 102
+    int BIRD_HEIGHT = 38 * 3; // 102
 
-    int PIPE_WIDTH = 220;
+    int PIPE_WIDTH = 200;
     int PIPE_HEIGHT = 500;
     int PIPE_OPENING_SPACE = BOARD_HEIGHT / 3; // 240
     int PIPE_SPAWN_DELAY_MS = 2500;
