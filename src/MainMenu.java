@@ -12,30 +12,44 @@ public class MainMenu extends JPanel {
     private Image backgroundImage;
     private Image titleImage;
     private Image startButtonImage;
-    private Image startButtonHoverImage; 
-    private Image currentStartButtonImage; 
+    private Image startButtonHoverImage;
+    private Image currentStartButtonImage;
+
+    private Image skinButtonImage;
+    private Image skinButtonHoverImage;
+    private Image currentSkinButtonImage;
 
     private Rectangle startButtonBounds;
+    private Rectangle skinButtonBounds;
     private List<ActionListener> listeners = new ArrayList<>();
 
-    private static final int PANEL_WIDTH = 1280;
-    private static final int PANEL_HEIGHT = 720;
+    private int currentSkinIndex = 0;
+    // Friendly names for skins, ensure this array length matches GameConstants.SKIN_IDENTIFIERS
+    private final String[] skinDisplayNames = {"Theme: Classic", "Theme: Retro", "Theme: Snowy"};
+
+
+    private static final int PANEL_WIDTH = GameConstants.BOARD_WIDTH;
+    private static final int PANEL_HEIGHT = GameConstants.BOARD_HEIGHT;
 
     public MainMenu() {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-        setFocusable(true); 
+        setFocusable(true);
 
-        loadImages();
+        loadMenuImagesAndInitialBackground(); // Renamed for clarity
         calculateButtonBounds();
 
         currentStartButtonImage = startButtonImage;
+        currentSkinButtonImage = skinButtonImage;
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (startButtonBounds != null && startButtonBounds.contains(e.getPoint())) {
-                    // Tombol ditekan
                     notifyListeners("start_game");
+                } else if (skinButtonBounds != null && skinButtonBounds.contains(e.getPoint())) {
+                    currentSkinIndex = (currentSkinIndex + 1) % GameConstants.SKIN_IDENTIFIERS.length;
+                    loadSkinnedMainMenuBackground(GameConstants.SKIN_IDENTIFIERS[currentSkinIndex]);
+                    repaint();
                 }
             }
         });
@@ -43,61 +57,112 @@ public class MainMenu extends JPanel {
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
+                boolean needsRepaint = false;
                 if (startButtonBounds != null && startButtonBounds.contains(e.getPoint())) {
-                    if (startButtonHoverImage != null) {
+                    if (currentStartButtonImage != startButtonHoverImage && startButtonHoverImage != null) {
                         currentStartButtonImage = startButtonHoverImage;
+                        needsRepaint = true;
                     }
-                    // Anda bisa menambahkan efek lain di sini jika tidak ada gambar hover
-                    // misalnya, mengubah cursor: setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 } else {
-                    currentStartButtonImage = startButtonImage;
-                    // setCursor(Cursor.getDefaultCursor());
+                    if (currentStartButtonImage != startButtonImage) {
+                        currentStartButtonImage = startButtonImage;
+                        needsRepaint = true;
+                    }
                 }
-                repaint(); // Gambar ulang untuk menampilkan perubahan tombol
+
+                if (skinButtonBounds != null && skinButtonBounds.contains(e.getPoint())) {
+                    if (currentSkinButtonImage != skinButtonHoverImage && skinButtonHoverImage != null) {
+                        currentSkinButtonImage = skinButtonHoverImage;
+                        needsRepaint = true;
+                    }
+                } else {
+                    if (currentSkinButtonImage != skinButtonImage) {
+                        currentSkinButtonImage = skinButtonImage;
+                        needsRepaint = true;
+                    }
+                }
+
+                if (needsRepaint) {
+                    repaint();
+                }
             }
         });
     }
 
-    private void loadImages() {
+    private void loadMenuImagesAndInitialBackground() {
         try {
-            backgroundImage = new ImageIcon(getClass().getResource("./assets/menu/main_background.png")).getImage();
-            titleImage = new ImageIcon(getClass().getResource("./assets/menu/title.png")).getImage();
-            startButtonImage = new ImageIcon(getClass().getResource("./assets/menu/start_button.png")).getImage();
+            // Load static menu images
+            titleImage = new ImageIcon(getClass().getResource(GameConstants.MAIN_MENU_TITLE_PATH)).getImage();
+            startButtonImage = new ImageIcon(getClass().getResource(GameConstants.START_BUTTON_PATH)).getImage();
+            skinButtonImage = new ImageIcon(getClass().getResource(GameConstants.SKIN_BUTTON_PATH)).getImage();
 
-            // Coba muat gambar hover, jika tidak ada, startButtonHoverImage akan null
-            java.net.URL hoverImgURL = getClass().getResource("./assets/menu/start_button_hover.png");
-            if (hoverImgURL != null) {
-                startButtonHoverImage = new ImageIcon(hoverImgURL).getImage();
-            } else {
-                startButtonHoverImage = null; // Tidak ada gambar hover spesifik
-            }
+            java.net.URL startHoverImgURL = getClass().getResource(GameConstants.START_BUTTON_HOVER_PATH);
+            startButtonHoverImage = (startHoverImgURL != null) ? new ImageIcon(startHoverImgURL).getImage() : startButtonImage;
+
+            java.net.URL skinHoverImgURL = getClass().getResource(GameConstants.SKIN_BUTTON_HOVER_PATH);
+            skinButtonHoverImage = (skinHoverImgURL != null) ? new ImageIcon(skinHoverImgURL).getImage() : skinButtonImage;
 
         } catch (Exception e) {
-            System.err.println("Error loading menu images: " + e.getMessage());
+            System.err.println("Error loading static menu images: " + e.getMessage());
             e.printStackTrace();
-            // Jika gambar gagal dimuat, komponen mungkin tidak terlihat benar.
-            // Anda bisa mengatur gambar fallback atau menampilkan pesan error.
+        }
+        // Load initial background based on default skin
+        loadSkinnedMainMenuBackground(GameConstants.SKIN_IDENTIFIERS[currentSkinIndex]);
+    }
+    
+    private void loadSkinnedMainMenuBackground(String skinIdentifier) {
+        try {
+            String bgPath = GameConstants.MAIN_MENU_BG_SKIN_PREFIX + skinIdentifier + GameConstants.IMG_EXTENSION;
+            java.net.URL bgURL = getClass().getResource(bgPath);
+            if (bgURL != null) {
+                this.backgroundImage = new ImageIcon(bgURL).getImage();
+            } else {
+                // Fallback to the original generic main menu background if specific one not found
+                this.backgroundImage = new ImageIcon(getClass().getResource(GameConstants.DEFAULT_MAIN_MENU_BG_PATH)).getImage();
+                System.err.println("Skinned main menu background not found: " + bgPath + ". Using default: " + GameConstants.DEFAULT_MAIN_MENU_BG_PATH);
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading skinned main menu background for " + skinIdentifier + ": " + e.getMessage());
+            // Fallback to default if any error
+            try {
+                 this.backgroundImage = new ImageIcon(getClass().getResource(GameConstants.DEFAULT_MAIN_MENU_BG_PATH)).getImage();
+            } catch (Exception e2) {
+                System.err.println("Error loading default main menu background: " + e2.getMessage());
+                this.backgroundImage = null; 
+            }
         }
     }
 
+
     private void calculateButtonBounds() {
+        int buttonSpacing = 20;
+
         if (startButtonImage != null) {
-            int buttonWidth = startButtonImage.getWidth(null);
-            int buttonHeight = startButtonImage.getHeight(null);
+            int startButtonWidth = startButtonImage.getWidth(null);
+            int startButtonHeight = startButtonImage.getHeight(null);
+            int startButtonX = (PANEL_WIDTH - startButtonWidth) / 2;
+            int startButtonY = (int) (PANEL_HEIGHT * 0.55); // Adjusted position
+            startButtonBounds = new Rectangle(startButtonX, startButtonY, startButtonWidth, startButtonHeight);
 
-            // Posisi tombol start (misalnya, tengah bawah)
-            // Sesuaikan nilai ini untuk mendapatkan tata letak yang diinginkan
-            int buttonX = (PANEL_WIDTH - buttonWidth) / 2;
-            // Perkirakan Y berdasarkan posisi title atau persentase tinggi panel
-            int buttonY = PANEL_HEIGHT / 2 + 50; // Sesuaikan angka 50 ini
-            if (titleImage != null) {
-                 // Posisi tombol Y sedikit di bawah tengah, setelah title
-                 // Asumsikan title ditaruh di sekitar PANEL_HEIGHT / 3 atau PANEL_HEIGHT * 0.35
-                buttonY = (int) (PANEL_HEIGHT * 0.55); // Atau (int) (PANEL_HEIGHT * 0.35 + titleImage.getHeight(null) + 20);
+            if (skinButtonImage != null) {
+                int skinButtonWidth = skinButtonImage.getWidth(null);
+                int skinButtonHeight = skinButtonImage.getHeight(null);
+                int skinButtonX = (PANEL_WIDTH - skinButtonWidth) / 2;
+                int skinButtonY = startButtonY + startButtonHeight + buttonSpacing;
+                skinButtonBounds = new Rectangle(skinButtonX, skinButtonY, skinButtonWidth, skinButtonHeight);
             }
-
-
-            startButtonBounds = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+        }  else {
+            // Fallback if startButtonImage is null (e.g. path error)
+            // So skin button can still be positioned relative to a default spot
+            int fallBackStartY = (int) (PANEL_HEIGHT * 0.55);
+            int fallBackHeight = 50; // Arbitrary height
+             if (skinButtonImage != null) {
+                int skinButtonWidth = skinButtonImage.getWidth(null);
+                int skinButtonHeight = skinButtonImage.getHeight(null);
+                int skinButtonX = (PANEL_WIDTH - skinButtonWidth) / 2;
+                int skinButtonY = fallBackStartY + fallBackHeight + buttonSpacing;
+                skinButtonBounds = new Rectangle(skinButtonX, skinButtonY, skinButtonWidth, skinButtonHeight);
+            }
         }
     }
 
@@ -105,26 +170,52 @@ public class MainMenu extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Gambar background
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage, 0, 0, PANEL_WIDTH, PANEL_HEIGHT, null);
         } else {
-            g2d.setColor(Color.DARK_GRAY); // Fallback jika background tidak ada
+            g2d.setColor(Color.DARK_GRAY);
             g2d.fillRect(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
         }
 
-        // Gambar title
         if (titleImage != null) {
             int titleX = (PANEL_WIDTH - titleImage.getWidth(null)) / 2;
-            // Sesuaikan nilai Y ini untuk posisi vertikal title
-            int titleY = (int) (PANEL_HEIGHT * 0.25); // Misalnya 25% dari atas
+            int titleY = (int) (PANEL_HEIGHT * 0.20);
             g2d.drawImage(titleImage, titleX, titleY, null);
         }
 
-        // Gambar tombol start
         if (currentStartButtonImage != null && startButtonBounds != null) {
             g2d.drawImage(currentStartButtonImage, startButtonBounds.x, startButtonBounds.y, null);
+        }
+
+        if (currentSkinButtonImage != null && skinButtonBounds != null) {
+            g2d.drawImage(currentSkinButtonImage, skinButtonBounds.x, skinButtonBounds.y, null);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 20));
+            String skinText = (currentSkinIndex < skinDisplayNames.length) ? skinDisplayNames[currentSkinIndex] : "Skin: N/A";
+            FontMetrics fm = g.getFontMetrics();
+            int textWidth = fm.stringWidth(skinText);
+            int textX = skinButtonBounds.x + (skinButtonBounds.width - textWidth) / 2;
+            int textY = skinButtonBounds.y + skinButtonBounds.height + fm.getAscent() + 5;
+             if (currentSkinButtonImage.getHeight(null) < 60 && currentSkinButtonImage.getHeight(null) > 0) { // If button image is short
+                 textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
+            } else if (currentSkinButtonImage.getHeight(null) == 0) { // No image, draw text inside fallback rect
+                 textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
+            }
+
+            g2d.drawString(skinText, textX, textY);
+        } else if (skinButtonBounds != null) {
+            g2d.setColor(Color.GRAY);
+            g2d.fillRect(skinButtonBounds.x, skinButtonBounds.y, skinButtonBounds.width, skinButtonBounds.height);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 16));
+            String skinText = (currentSkinIndex < skinDisplayNames.length) ? skinDisplayNames[currentSkinIndex] : "Skin: N/A";
+            FontMetrics fm = g.getFontMetrics();
+            int textWidth = fm.stringWidth(skinText);
+            int textX = skinButtonBounds.x + (skinButtonBounds.width - textWidth) / 2;
+            int textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.drawString(skinText, textX, textY);
         }
     }
 
@@ -139,23 +230,7 @@ public class MainMenu extends JPanel {
         }
     }
 
-    // Main method untuk testing (opsional)
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Main Menu Test");
-        MainMenu mainMenu = new MainMenu();
-        
-        mainMenu.addActionListener(e -> {
-            if ("start_game".equals(e.getActionCommand())) {
-                System.out.println("Start button clicked!");
-                // Di sini Anda akan mengganti panel atau memulai game
-                JOptionPane.showMessageDialog(frame, "Start Game Clicked!");
-            }
-        });
-        
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(mainMenu);
-        frame.pack(); // Mengatur ukuran frame sesuai preferredSize dari panel
-        frame.setLocationRelativeTo(null); // Frame di tengah layar
-        frame.setVisible(true);
+    public String getSelectedSkinIdentifier() {
+        return GameConstants.SKIN_IDENTIFIERS[currentSkinIndex];
     }
 }

@@ -4,7 +4,6 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 public class App {
     private static JFrame frame;
     private static CardLayout cardLayout;
@@ -32,20 +31,35 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ("start_game".equals(e.getActionCommand())) {
+                    String selectedSkin = mainMenu.getSelectedSkinIdentifier();
+                    flappyBirdGame.applySkinAndRestart(selectedSkin); 
+                    
                     cardLayout.show(mainPanel, FLAPPY_BIRD_PANEL);
                     flappyBirdGame.requestFocusInWindow();
                 }
             }
         });
 
+        // Listener for FlappyBird panel changes (e.g., Esc to menu)
+        flappyBirdGame.addPanelChangeListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ("go_to_main_menu".equals(e.getActionCommand())) {
+                    // Ensure game timers are stopped if FlappyBird doesn't handle it fully on setGameOver
+                    // (setGameOver should already be called in FlappyBird before notifying)
+                    cardLayout.show(mainPanel, MAIN_MENU_PANEL);
+                    mainMenu.requestFocusInWindow();
+                }
+            }
+        });
+
         frame.getContentPane().add(mainPanel);
-        frame.pack(); // Ukuran frame akan disesuaikan dengan preferredSize panel aktif
+        frame.pack(); 
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
 
-        // Tampilkan main menu pertama kali
         cardLayout.show(mainPanel, MAIN_MENU_PANEL);
-        mainMenu.requestFocusInWindow(); // Berikan fokus ke main menu
+        mainMenu.requestFocusInWindow();
     }
 }
