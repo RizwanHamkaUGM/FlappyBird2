@@ -62,7 +62,7 @@ public class PipeManager {
         return false;
     }
 
-    // Method collision bisa menjadi static helper atau tetap di sini jika hanya dipakai PipeManager
+    // Method collision
     private boolean collision(Bird a, Pipe b) {
         return a.getX() < b.getX() + b.getWidth() &&
             a.getX() + a.getWidth() > b.getX() &&

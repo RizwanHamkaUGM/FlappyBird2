@@ -8,7 +8,7 @@ public class AssetLoader {
     private Image birdFlyImg;
     private Image topPipeImg;
     private Image bottomPipeImg;
-    private Image gameOverImg; // New image for Game Over
+    private Image gameOverImg; 
 
     private String currentSkinIdentifier;
 
@@ -33,7 +33,6 @@ public class AssetLoader {
     public void loadAssetsForSkin(String skinIdentifier) {
         this.currentSkinIdentifier = skinIdentifier;
         try {
-            // Build file paths
             String bgPath = "assets/background/bg_" + skinIdentifier + ".png";
             String birdDefaultPath = "assets/birds/bird_" + skinIdentifier + ".png";
             String birdFlyPath = "assets/birds/bird_" + skinIdentifier + "_fly.png";
@@ -105,6 +104,6 @@ public class AssetLoader {
     public Image getBirdFlyImg() { return birdFlyImg; }
     public Image getTopPipeImg() { return topPipeImg; }
     public Image getBottomPipeImg() { return bottomPipeImg; }
-    public Image getGameOverImg() { return gameOverImg; } // Getter for game over image
+    public Image getGameOverImg() { return gameOverImg; }
     public String getCurrentSkinIdentifier() { return currentSkinIdentifier; }
 }

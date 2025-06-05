@@ -40,13 +40,10 @@ public class App {
             }
         });
 
-        // Listener for HatchWing panel changes (e.g., Esc to menu)
         HatchWingGame.addPanelChangeListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ("go_to_main_menu".equals(e.getActionCommand())) {
-                    // Ensure game timers are stopped if HatchWing doesn't handle it fully on setGameOver
-                    // (setGameOver should already be called in HatchWing before notifying)
                     cardLayout.show(mainPanel, MAIN_MENU_PANEL);
                     mainMenu.requestFocusInWindow();
                 }

@@ -35,7 +35,7 @@ public class MainMenu extends JPanel {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setFocusable(true);
 
-        loadMenuImagesAndInitialBackground(); // Renamed for clarity
+        loadMenuImagesAndInitialBackground(); 
         calculateButtonBounds();
 
         currentStartButtonImage = startButtonImage;
@@ -122,20 +122,19 @@ public class MainMenu extends JPanel {
             if (startHoverFile.exists()) {
                 startButtonHoverImage = new ImageIcon(startHoverFile.getAbsolutePath()).getImage();
             } else {
-                startButtonHoverImage = startButtonImage; // Use normal button as fallback
+                startButtonHoverImage = startButtonImage; 
             }
 
             if (skinHoverFile.exists()) {
                 skinButtonHoverImage = new ImageIcon(skinHoverFile.getAbsolutePath()).getImage();
             } else {
-                skinButtonHoverImage = skinButtonImage; // Use normal button as fallback
+                skinButtonHoverImage = skinButtonImage;
             }
 
         } catch (Exception e) {
             System.err.println("Error loading static menu images: " + e.getMessage());
             e.printStackTrace();
         }
-        // Load initial background based on default skin
         loadSkinnedMainMenuBackground(GameConstants.SKIN_IDENTIFIERS[currentSkinIndex]);
     }
     
@@ -193,10 +192,8 @@ public class MainMenu extends JPanel {
                 skinButtonBounds = new Rectangle(skinButtonX, skinButtonY, skinButtonWidth, skinButtonHeight);
             }
         }  else {
-            // Fallback if startButtonImage is null (e.g. path error)
-            // So skin button can still be positioned relative to a default spot
             int fallBackStartY = (int) (PANEL_HEIGHT * 0.55);
-            int fallBackHeight = 50; // Arbitrary height
+            int fallBackHeight = 50; 
             if (skinButtonImage != null) {
                 int skinButtonWidth = skinButtonImage.getWidth(null);
                 int skinButtonHeight = skinButtonImage.getHeight(null);
