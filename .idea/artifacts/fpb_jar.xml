@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="fpb:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/fpb_jar</output-path>
+    <root id="archive" name="fpb.jar">
+      <element id="module-output" name="fpb" />
+    </root>
+  </artifact>
+</component>

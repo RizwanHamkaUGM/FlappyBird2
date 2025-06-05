@@ -9,10 +9,10 @@ public class App {
     private static CardLayout cardLayout;
     private static JPanel mainPanel; 
     private static MainMenu mainMenu;
-    private static FlappyBird flappyBirdGame;
+    private static HatchWing HatchWingGame;
 
     public static final String MAIN_MENU_PANEL = "MainMenu";
-    public static final String FLAPPY_BIRD_PANEL = "FlappyBird";
+    public static final String FLAPPY_BIRD_PANEL = "HatchWing";
 
     public static void main(String[] args) {
         frame = new JFrame("Flappy Bird Extended");
@@ -22,31 +22,31 @@ public class App {
         mainPanel = new JPanel(cardLayout);
 
         mainMenu = new MainMenu();
-        flappyBirdGame = new FlappyBird(); 
+        HatchWingGame = new HatchWing(); 
 
         mainPanel.add(mainMenu, MAIN_MENU_PANEL);
-        mainPanel.add(flappyBirdGame, FLAPPY_BIRD_PANEL);
+        mainPanel.add(HatchWingGame, FLAPPY_BIRD_PANEL);
 
         mainMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ("start_game".equals(e.getActionCommand())) {
                     String selectedSkin = mainMenu.getSelectedSkinIdentifier();
-                    flappyBirdGame.applySkinAndRestart(selectedSkin); 
+                    HatchWingGame.applySkinAndRestart(selectedSkin); 
                     
                     cardLayout.show(mainPanel, FLAPPY_BIRD_PANEL);
-                    flappyBirdGame.requestFocusInWindow();
+                    HatchWingGame.requestFocusInWindow();
                 }
             }
         });
 
-        // Listener for FlappyBird panel changes (e.g., Esc to menu)
-        flappyBirdGame.addPanelChangeListener(new ActionListener() {
+        // Listener for HatchWing panel changes (e.g., Esc to menu)
+        HatchWingGame.addPanelChangeListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ("go_to_main_menu".equals(e.getActionCommand())) {
-                    // Ensure game timers are stopped if FlappyBird doesn't handle it fully on setGameOver
-                    // (setGameOver should already be called in FlappyBird before notifying)
+                    // Ensure game timers are stopped if HatchWing doesn't handle it fully on setGameOver
+                    // (setGameOver should already be called in HatchWing before notifying)
                     cardLayout.show(mainPanel, MAIN_MENU_PANEL);
                     mainMenu.requestFocusInWindow();
                 }

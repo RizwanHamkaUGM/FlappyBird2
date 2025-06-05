@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import javax.swing.*;
 
-public class FlappyBird extends JPanel implements ActionListener, KeyListener {
+public class HatchWing extends JPanel implements ActionListener, KeyListener {
 
     private AssetLoader assetLoader;
     private Bird bird;
@@ -23,7 +23,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
     private List<ActionListener> panelChangeListeners = new ArrayList<>(); // For Esc key
 
-    public FlappyBird() {
+    public HatchWing() {
         setPreferredSize(new Dimension(GameConstants.BOARD_WIDTH, GameConstants.BOARD_HEIGHT));
         setFocusable(true);
         addKeyListener(this);

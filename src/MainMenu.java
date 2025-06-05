@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,6 @@ public class MainMenu extends JPanel {
     private List<ActionListener> listeners = new ArrayList<>();
 
     private int currentSkinIndex = 0;
-    // Friendly names for skins, ensure this array length matches GameConstants.SKIN_IDENTIFIERS
     private final String[] skinDisplayNames = {"Theme: Classic", "Theme: Retro", "Theme: Snowy"};
 
 
@@ -91,16 +91,45 @@ public class MainMenu extends JPanel {
 
     private void loadMenuImagesAndInitialBackground() {
         try {
-            // Load static menu images
-            titleImage = new ImageIcon(getClass().getResource(GameConstants.MAIN_MENU_TITLE_PATH)).getImage();
-            startButtonImage = new ImageIcon(getClass().getResource(GameConstants.START_BUTTON_PATH)).getImage();
-            skinButtonImage = new ImageIcon(getClass().getResource(GameConstants.SKIN_BUTTON_PATH)).getImage();
+            // Load static menu images using file paths
+            File titleFile = new File("assets/menu/title.png");
+            File startButtonFile = new File("assets/menu/start_button.png");
+            File skinButtonFile = new File("assets/menu/skin_button.png");
+            File startHoverFile = new File("assets/menu/start_button_hover.png");
+            File skinHoverFile = new File("assets/menu/skin_button_hover.png");
 
-            java.net.URL startHoverImgURL = getClass().getResource(GameConstants.START_BUTTON_HOVER_PATH);
-            startButtonHoverImage = (startHoverImgURL != null) ? new ImageIcon(startHoverImgURL).getImage() : startButtonImage;
+            if (titleFile.exists()) {
+                titleImage = new ImageIcon(titleFile.getAbsolutePath()).getImage();
+            } else {
+                System.err.println("Title image not found: " + titleFile.getAbsolutePath());
+                titleImage = null;
+            }
 
-            java.net.URL skinHoverImgURL = getClass().getResource(GameConstants.SKIN_BUTTON_HOVER_PATH);
-            skinButtonHoverImage = (skinHoverImgURL != null) ? new ImageIcon(skinHoverImgURL).getImage() : skinButtonImage;
+            if (startButtonFile.exists()) {
+                startButtonImage = new ImageIcon(startButtonFile.getAbsolutePath()).getImage();
+            } else {
+                System.err.println("Start button image not found: " + startButtonFile.getAbsolutePath());
+                startButtonImage = null;
+            }
+
+            if (skinButtonFile.exists()) {
+                skinButtonImage = new ImageIcon(skinButtonFile.getAbsolutePath()).getImage();
+            } else {
+                System.err.println("Skin button image not found: " + skinButtonFile.getAbsolutePath());
+                skinButtonImage = null;
+            }
+
+            if (startHoverFile.exists()) {
+                startButtonHoverImage = new ImageIcon(startHoverFile.getAbsolutePath()).getImage();
+            } else {
+                startButtonHoverImage = startButtonImage; // Use normal button as fallback
+            }
+
+            if (skinHoverFile.exists()) {
+                skinButtonHoverImage = new ImageIcon(skinHoverFile.getAbsolutePath()).getImage();
+            } else {
+                skinButtonHoverImage = skinButtonImage; // Use normal button as fallback
+            }
 
         } catch (Exception e) {
             System.err.println("Error loading static menu images: " + e.getMessage());
@@ -112,20 +141,32 @@ public class MainMenu extends JPanel {
     
     private void loadSkinnedMainMenuBackground(String skinIdentifier) {
         try {
-            String bgPath = GameConstants.MAIN_MENU_BG_SKIN_PREFIX + skinIdentifier + GameConstants.IMG_EXTENSION;
-            java.net.URL bgURL = getClass().getResource(bgPath);
-            if (bgURL != null) {
-                this.backgroundImage = new ImageIcon(bgURL).getImage();
+            String bgPath = "assets/menu/main_background_" + skinIdentifier + ".png";
+            File bgFile = new File(bgPath);
+            
+            if (bgFile.exists()) {
+                this.backgroundImage = new ImageIcon(bgFile.getAbsolutePath()).getImage();
             } else {
                 // Fallback to the original generic main menu background if specific one not found
-                this.backgroundImage = new ImageIcon(getClass().getResource(GameConstants.DEFAULT_MAIN_MENU_BG_PATH)).getImage();
-                System.err.println("Skinned main menu background not found: " + bgPath + ". Using default: " + GameConstants.DEFAULT_MAIN_MENU_BG_PATH);
+                File defaultBgFile = new File("assets/menu/main_background.png");
+                if (defaultBgFile.exists()) {
+                    this.backgroundImage = new ImageIcon(defaultBgFile.getAbsolutePath()).getImage();
+                    System.err.println("Skinned main menu background not found: " + bgPath + ". Using default.");
+                } else {
+                    System.err.println("Default main menu background not found: " + defaultBgFile.getAbsolutePath());
+                    this.backgroundImage = null;
+                }
             }
         } catch (Exception e) {
             System.err.println("Error loading skinned main menu background for " + skinIdentifier + ": " + e.getMessage());
             // Fallback to default if any error
             try {
-                 this.backgroundImage = new ImageIcon(getClass().getResource(GameConstants.DEFAULT_MAIN_MENU_BG_PATH)).getImage();
+                File defaultBgFile = new File("assets/menu/main_background.png");
+                if (defaultBgFile.exists()) {
+                    this.backgroundImage = new ImageIcon(defaultBgFile.getAbsolutePath()).getImage();
+                } else {
+                    this.backgroundImage = null;
+                }
             } catch (Exception e2) {
                 System.err.println("Error loading default main menu background: " + e2.getMessage());
                 this.backgroundImage = null; 
@@ -156,7 +197,7 @@ public class MainMenu extends JPanel {
             // So skin button can still be positioned relative to a default spot
             int fallBackStartY = (int) (PANEL_HEIGHT * 0.55);
             int fallBackHeight = 50; // Arbitrary height
-             if (skinButtonImage != null) {
+            if (skinButtonImage != null) {
                 int skinButtonWidth = skinButtonImage.getWidth(null);
                 int skinButtonHeight = skinButtonImage.getHeight(null);
                 int skinButtonX = (PANEL_WIDTH - skinButtonWidth) / 2;
@@ -199,9 +240,9 @@ public class MainMenu extends JPanel {
             int textX = skinButtonBounds.x + (skinButtonBounds.width - textWidth) / 2;
             int textY = skinButtonBounds.y + skinButtonBounds.height + fm.getAscent() + 5;
              if (currentSkinButtonImage.getHeight(null) < 60 && currentSkinButtonImage.getHeight(null) > 0) { // If button image is short
-                 textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
+                textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
             } else if (currentSkinButtonImage.getHeight(null) == 0) { // No image, draw text inside fallback rect
-                 textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
+                textY = skinButtonBounds.y + (skinButtonBounds.height - fm.getHeight()) / 2 + fm.getAscent();
             }
 
             g2d.drawString(skinText, textX, textY);
@@ -233,4 +274,4 @@ public class MainMenu extends JPanel {
     public String getSelectedSkinIdentifier() {
         return GameConstants.SKIN_IDENTIFIERS[currentSkinIndex];
     }
-}
+} 

@@ -40,7 +40,7 @@ public class PipeManager {
             pipe.setX(pipe.getX() + GameConstants.VELOCITY_X_PIPES);
 
             if (!pipe.isPassed() && bird.getX() > pipe.getX() + pipe.getWidth()) {
-                scoreGainedThisFrame += 0.5; 
+                scoreGainedThisFrame += 5; 
                 pipe.setPassed(true);
             }
         }
