@@ -20,7 +20,7 @@ public interface GameConstants {
     String[] SKIN_IDENTIFIERS = {"level1", "level2", "level3"};
     String DEFAULT_SKIN_IDENTIFIER = SKIN_IDENTIFIERS[0];
 
-    // File-based paths (without leading slash for relative file access)
+    // File-based paths 
     String BG_PATH_PREFIX = "assets/background/bg_";
     String BIRD_DEFAULT_PATH_PREFIX = "assets/birds/bird_";
     String BIRD_FLY_PATH_PREFIX = "assets/birds/bird_";
@@ -33,7 +33,7 @@ public interface GameConstants {
     String DEFAULT_MAIN_MENU_BG_PATH = "assets/menu/main_background.png";
     String MAIN_MENU_BG_SKIN_PREFIX = "assets/menu/main_background_";
     String MAIN_MENU_TITLE_PATH = "assets/menu/title.png";
-    String START_BUTTON_PATH = "assets/menu/start_button.png";
+    String START_BUTTON_PATH = "assets/menu/start_button.png"; 
     String START_BUTTON_HOVER_PATH = "assets/menu/start_button_hover.png";
     String SKIN_BUTTON_PATH = "assets/menu/skin_button.png";
     String SKIN_BUTTON_HOVER_PATH = "assets/menu/skin_button_hover.png";

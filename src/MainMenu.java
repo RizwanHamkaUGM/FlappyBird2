@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenu extends JPanel {
-
     private Image backgroundImage;
     private Image titleImage;
     private Image startButtonImage;
