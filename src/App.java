@@ -15,7 +15,7 @@ public class App {
     public static final String FLAPPY_BIRD_PANEL = "HatchWing";
 
     public static void main(String[] args) {
-        frame = new JFrame("Flappy Bird Extended");
+        frame = new JFrame("HatchWing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         cardLayout = new CardLayout();
